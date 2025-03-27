@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给最爱的你</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffc0cb;
+            font-family: 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #d23669;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 90px;
+            margin: 30px auto;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart:before, .heart:after {
+            position: absolute;
+            content: "";
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: #ff4757;
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .message {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-out 0.5s forwards;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-out 1s forwards;
+        }
+
+        .btn:hover {
+            background: #ff6b81;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-particle {
+            position: absolute;
+            opacity: 0;
+            font-size: 20px;
+            color: #ff4757;
+            animation: float 4s ease-in infinite;
+        }
+
+        .photo-frame {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            overflow: hidden;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeIn 1s ease-out 0.8s forwards;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(0.95); }
+            5% { transform: scale(1.1); }
+            10% { transform: scale(0.95); }
+            15% { transform: scale(1.05); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(0.95); }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #response {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #d23669;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <h1>给最爱的你</h1>
+        
+        <div class="photo-frame">
+            <!-- 替换为你的照片URL -->
+            <img src="https://i.imgur.com/JqYeYnN.jpg" alt="我们的照片">
+        </div>
+        
+        <div class="heart"></div>
+        
+        <div class="message">
+            <p>从遇见你的那一刻起，</p>
+            <p>我的心就像小鹿乱撞，</p>
+            <p>每一天都因为有你而变得特别。</p>
+            <p>你愿意和我一起，</p>
+            <p>写下我们未来的故事吗？</p>
+        </div>
+        
+        <button class="btn" id="loveBtn">我愿意 ❤</button>
+        <button class="btn hidden" id="noBtn" style="background: #aaa; margin-left: 10px;">再考虑下</button>
+        
+        <div id="response"></div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 背景音乐
+        const bgMusic = document.getElementById('bgMusic');
+        document.addEventListener('click', function() {
+            bgMusic.play().catch(e => console.log("自动播放被阻止，请手动点击"));
+        }, { once: true });
+
+        // 漂浮爱心
+        const heartsContainer = document.getElementById('hearts');
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-particle';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+        setInterval(createHeart, 300);
+
+        // 按钮交互
+        const loveBtn = document.getElementById('loveBtn');
+        const noBtn = document.getElementById('noBtn');
+        const response = document.getElementById('response');
+        
+        loveBtn.addEventListener('click', function() {
+            response.textContent = "我爱你！❤️";
+            response.style.opacity = 1;
+            loveBtn.classList.add('hidden');
+            noBtn.classList.add('hidden');
+            
+            // 庆祝效果
+            for(let i = 0; i < 50; i++) {
+                setTimeout(createHeart, i * 100);
+            }
+        });
+
+        noBtn.addEventListener('mouseover', function() {
+            // 让"再考虑下"按钮逃跑
+            const x = Math.random() * window.innerWidth * 0.7;
+            const y = Math.random() * window.innerHeight * 0.7;
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        });
+
+        // 显示"再考虑下"按钮
+        loveBtn.addEventListener('mouseover', function() {
+            noBtn.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
