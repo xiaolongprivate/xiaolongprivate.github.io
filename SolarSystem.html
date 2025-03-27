@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态太阳系模型</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #050608;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #4fc3f7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>太阳系模型</h1>
+        <canvas id="solarSystem" width="600" height="1200"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('solarSystem');
+            const ctx = canvas.getContext('2d');
+            
+            // 中心点（太阳位置）
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // 星星数组
+            const stars = [];
+            
+            // 行星数据
+            const planets = [
+                { name: '水星', imageUrl: 'https://img.alicdn.com/imgextra/i2/O1CN01UjgqIB1SrRxQfrflh_!!6000000002300-2-tps-800-800.png', size: 5, orbitRadius: 60, speed: 4, angle: 0, image: null },
+                { name: '金星', imageUrl: 'https://img.alicdn.com/imgextra/i3/O1CN01JGEgLU1dfxnVvp91R_!!6000000003764-2-tps-800-800.png', size: 8, orbitRadius: 90, speed: 3, angle: 0, image: null },
+                { name: '地球', imageUrl: 'https://img.alicdn.com/imgextra/i4/O1CN01R6wlzD1IhhMlBcGLg_!!6000000000925-2-tps-800-800.png', size: 10, orbitRadius: 120, speed: 2, angle: 0, image: null, moon: { imageUrl: 'https://img.alicdn.com/imgextra/i4/O1CN01Ad5SeB20tv1nfRoA2_!!6000000006908-2-tps-800-800.png', size: 3, orbitRadius: 20, angle: 0, speed: 5, image: null } },
+                { name: '火星', imageUrl: 'https://img.alicdn.com/imgextra/i1/O1CN01OlZAk81OVEHJ0pazq_!!6000000001710-2-tps-800-800.png', size: 7, orbitRadius: 150, speed: 1.5, angle: 0, image: null },
+                { name: '木星', imageUrl: 'https://img.alicdn.com/imgextra/i2/O1CN01MA3Mk51bAhWxWxHim_!!6000000003425-2-tps-800-800.png', size: 12, orbitRadius: 180, speed: 1, angle: 0, image: null },
+                { name: '土星', imageUrl: 'https://img.alicdn.com/imgextra/i2/O1CN01NG2FjS1XDDEofNNhg_!!6000000002889-2-tps-800-800.png', size: 24, orbitRadius: 210, speed: 0.8, angle: 0, image: null },
+                { name: '天王星', imageUrl: 'https://img.alicdn.com/imgextra/i1/O1CN01wnxTX51xIPkTHqPBr_!!6000000006420-2-tps-800-800.png', size: 9, orbitRadius: 240, speed: 0.5, angle: 0, image: null },
+                { name: '海王星', imageUrl: 'https://img.alicdn.com/imgextra/i1/O1CN01LTf0rT25zwJWsIDkD_!!6000000007598-2-tps-800-800.png', size: 8, orbitRadius: 270, speed: 0.4, angle: 0, image: null }
+            ];
+            
+            // 太阳数据
+            const sun = { 
+                imageUrl: 'https://img.alicdn.com/imgextra/i1/O1CN01oVLbLx22VlN34KDQs_!!6000000007126-2-tps-800-800.png', 
+                size: 60, 
+                image: null 
+            };
+            
+            // 生成星星
+            function generateStars() {
+                for (let i = 0; i < 200; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 0.5 + 0.5,
+                        opacity: Math.random() * 0.5 + 0.5
+                    });
+                }
+            }
+            
+            // 绘制星星
+            function drawStars() {
+                ctx.save();
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.fill();
+                });
+                ctx.restore();
+            }
+            
+            // 绘制背景
+            function drawBackground() {
+                const gradient = ctx.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, Math.max(canvas.width, canvas.height) / 2
+                );
+                gradient.addColorStop(0, '#1C2837');
+                gradient.addColorStop(1, '#050608');
+                
+                ctx.save();
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.restore();
+            }
+            
+            // 绘制轨道
+            function drawOrbits() {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.setLineDash([5, 5]);
+                
+                planets.forEach(planet => {
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        centerX, centerY,
+                        planet.orbitRadius, planet.orbitRadius * 0.6,
+                        0, 0, Math.PI * 2
+                    );
+                    ctx.stroke();
+                });
+                
+                ctx.restore();
+            }
+            
+            // 加载图像
+            function loadImages() {
+                let imagesToLoad = planets.length + 1; // 所有行星 + 太阳
+                
+                // 检查是否有月球
+                planets.forEach(planet => {
+                    if (planet.moon) {
+                        imagesToLoad++;
+                    }
+                });
+                
+                let imagesLoaded = 0;
+                
+                function imageLoaded() {
+                    imagesLoaded++;
+                    if (imagesLoaded === imagesToLoad) {
+                        // 所有图像加载完成，开始动画
+                        animate();
+                    }
+                }
+                
+                // 加载太阳图像
+                sun.image = new Image();
+                sun.image.onload = imageLoaded;
+                sun.image.src = sun.imageUrl;
+                
+                // 加载行星图像
+                planets.forEach(planet => {
+                    planet.image = new Image();
+                    planet.image.onload = imageLoaded;
+                    planet.image.src = planet.imageUrl;
+                    
+                    // 加载月球图像（如果有）
+                    if (planet.moon) {
+                        planet.moon.image = new Image();
+                        planet.moon.image.onload = imageLoaded;
+                        planet.moon.image.src = planet.moon.imageUrl;
+                    }
+                });
+            }
+            
+            // 绘制太阳
+            function drawSun() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, sun.size / 2, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(
+                    sun.image,
+                    centerX - sun.size / 2,
+                    centerY - sun.size / 2,
+                    sun.size,
+                    sun.size
+                );
+                ctx.restore();
+                
+                // 太阳光晕效果
+                const gradient = ctx.createRadialGradient(
+                    centerX, centerY, sun.size / 2,
+                    centerX, centerY, sun.size
+                );
+                gradient.addColorStop(0, 'rgba(255, 165, 0, 0.8)');
+                gradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
+                
+                ctx.save();
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, sun.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            // 绘制行星
+            function drawPlanets() {
+                planets.forEach(planet => {
+                    // 更新行星角度
+                    planet.angle += 0.005 * planet.speed;
+                    
+                    // 计算行星位置（椭圆轨道）
+                    const planetX = centerX + Math.cos(planet.angle) * planet.orbitRadius;
+                    const planetY = centerY + Math.sin(planet.angle) * planet.orbitRadius * 0.6;
+                    
+                    // 绘制行星
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(planetX, planetY, planet.size / 2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(
+                        planet.image,
+                        planetX - planet.size / 2,
+                        planetY - planet.size / 2,
+                        planet.size,
+                        planet.size
+                    );
+                    ctx.restore();
+                    
+                    // 如果有月球，绘制月球
+                    if (planet.moon) {
+                        // 更新月球角度
+                        planet.moon.angle += 0.01 * planet.moon.speed;
+                        
+                        // 计算月球位置（相对于行星）
+                        const moonX = planetX + Math.cos(planet.moon.angle) * planet.moon.orbitRadius;
+                        const moonY = planetY + Math.sin(planet.moon.angle) * planet.moon.orbitRadius;
+                        
+                        // 绘制月球
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(moonX, moonY, planet.moon.size / 2, 0, Math.PI * 2);
+                        ctx.closePath();
+                        ctx.clip();
+                        ctx.drawImage(
+                            planet.moon.image,
+                            moonX - planet.moon.size / 2,
+                            moonY - planet.moon.size / 2,
+                            planet.moon.size,
+                            planet.moon.size
+                        );
+                        ctx.restore();
+                    }
+                });
+            }
+            
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                drawBackground();
+                drawStars();
+                drawOrbits();
+                drawSun();
+                drawPlanets();
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // 初始化
+            generateStars();
+            loadImages();
+        });
+    </script>
+</body>
+</html>
