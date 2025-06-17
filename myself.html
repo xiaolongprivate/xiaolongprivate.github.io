@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网站导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --bg-light: #f8fafc;
+            --card-light: #ffffff;
+            --text-light: #334155;
+            --border-light: #e2e8f0;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-dark: #e2e8f0;
+            --border-dark: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0c1426 100%);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+            background: var(--card-light);
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .search-container input {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .theme-toggle {
+            background: var(--card-light);
+            border: 1px solid var(--border-light);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .theme-toggle i {
+            font-size: 1.3rem;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .theme-toggle i {
+            color: var(--text-dark);
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category {
+            background: var(--card-light);
+            border: 1px solid var(--border-light);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .category {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .category.active, .category:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .category i {
+            margin-right: 6px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: var(--card-light);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .card {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        body.dark-mode .card p {
+            color: #94a3b8;
+        }
+
+        .card .domain {
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .card .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--error);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--card-light);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--card-dark);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            background: var(--card-light);
+            font-size: 1rem;
+        }
+
+        body.dark-mode .form-group input, 
+        body.dark-mode .form-group select {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .icon-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-light);
+        }
+
+        body.dark-mode .btn-outline {
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .empty-state h3 {
+            color: var(--text-dark);
+        }
+
+        .empty-state p {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                width: 100%;
+                margin: 15px 0;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-compass"></i>
+                <h1>我的网站导航</h1>
+            </div>
+            <div class="controls">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="搜索网站...">
+                </div>
+                <div class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="categories">
+            <div class="category active" data-category="all">
+                <i class="fas fa-globe"></i>全部
+            </div>
+            <div class="category" data-category="work">
+                <i class="fas fa-briefcase"></i>工作
+            </div>
+            <div class="category" data-category="study">
+                <i class="fas fa-graduation-cap"></i>学习
+            </div>
+            <div class="category" data-category="entertainment">
+                <i class="fas fa-gamepad"></i>娱乐
+            </div>
+            <div class="category" data-category="social">
+                <i class="fas fa-users"></i>社交
+            </div>
+        </div>
+
+        <div class="grid" id="sites-grid">
+            <!-- 网站卡片会动态添加到这里 -->
+        </div>
+
+        <div class="add-btn" id="add-btn">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
+    <!-- 添加网站模态框 -->
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加新网站</h2>
+                <button class="close-btn" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="icon-preview">
+                <i class="fas fa-plus"></i>
+            </div>
+            <form id="add-form">
+                <div class="form-group">
+                    <label for="site-name">网站名称</label>
+                    <input type="text" id="site-name" required placeholder="例如：GitHub">
+                </div>
+                <div class="form-group">
+                    <label for="site-url">网站URL</label>
+                    <input type="url" id="site-url" required placeholder="例如：https://github.com">
+                </div>
+                <div class="form-group">
+                    <label for="site-category">分类</label>
+                    <select id="site-category" required>
+                        <option value="work">工作</option>
+                        <option value="study">学习</option>
+                        <option value="entertainment">娱乐</option>
+                        <option value="social">社交</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="site-icon">图标</label>
+                    <select id="site-icon" required>
+                        <option value="fa-brands fa-github">GitHub</option>
+                        <option value="fa-brands fa-google">Google</option>
+                        <option value="fa-brands fa-youtube">YouTube</option>
+                        <option value="fa-brands fa-twitter">Twitter</option>
+                        <option value="fa-brands fa-linkedin">LinkedIn</option>
+                        <option value="fa-solid fa-envelope">邮箱</option>
+                        <option value="fa-solid fa-cloud">云存储</option>
+                        <option value="fa-solid fa-newspaper">新闻</option>
+                        <option value="fa-solid fa-music">音乐</option>
+                        <option value="fa-solid fa-video">视频</option>
+                        <option value="fa-solid fa-shopping-cart">购物</option>
+                        <option value="fa-solid fa-code">编程</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancel-btn">取消</button>
+                    <button type="submit" class="btn btn-primary">添加网站</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 初始示例数据
+        const initialSites = [
+            {
+                id: 1,
+                name: "GitHub",
+                url: "https://github.com",
+                category: "work",
+                icon: "fa-brands fa-github"
+            },
+            {
+                id: 2,
+                name: "MDN Web Docs",
+                url: "https://developer.mozilla.org",
+                category: "study",
+                icon: "fa-brands fa-firefox"
+            },
+            {
+                id: 3,
+                name: "YouTube",
+                url: "https://youtube.com",
+                category: "entertainment",
+                icon: "fa-brands fa-youtube"
+            },
+            {
+                id: 4,
+                name: "Twitter",
+                url: "https://twitter.com",
+                category: "social",
+                icon: "fa-brands fa-twitter"
+            },
+            {
+                id: 5,
+                name: "Stack Overflow",
+                url: "https://stackoverflow.com",
+                category: "study",
+                icon: "fa-brands fa-stack-overflow"
+            },
+            {
+                id: 6,
+                name: "Reddit",
+                url: "https://reddit.com",
+                category: "social",
+                icon: "fa-brands fa-reddit"
+            }
+        ];
+
+        // DOM 元素
+        const sitesGrid = document.getElementById('sites-grid');
+        const addBtn = document.getElementById('add-btn');
+        const addModal = document.getElementById('add-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const addForm = document.getElementById('add-form');
+        const themeToggle = document.getElementById('theme-toggle');
+        const searchInput = document.getElementById('search-input');
+        const categoryButtons = document.querySelectorAll('.category');
+
+        // 状态变量
+        let sites = [];
+        let currentCategory = 'all';
+        let currentSearch = '';
+
+        // 初始化
+        function init() {
+            // 从本地存储加载网站或使用初始数据
+            const savedSites = localStorage.getItem('savedSites');
+            sites = savedSites ? JSON.parse(savedSites) : initialSites;
+            
+            // 加载主题偏好
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            
+            // 渲染网站
+            renderSites();
+            
+            // 添加事件监听器
+            setupEventListeners();
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            addBtn.addEventListener('click', () => {
+                addModal.classList.add('active');
+            });
+            
+            closeModal.addEventListener('click', closeAddModal);
+            cancelBtn.addEventListener('click', closeAddModal);
+            
+            addForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                addNewSite();
+            });
+            
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                renderSites();
+            });
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 更新UI
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // 更新类别并重新渲染
+                    currentCategory = button.dataset.category;
+                    renderSites();
+                });
+            });
+        }
+
+        // 关闭添加网站模态框
+        function closeAddModal() {
+            addModal.classList.remove('active');
+            addForm.reset();
+        }
+
+        // 添加新网站
+        function addNewSite() {
+            const name = document.getElementById('site-name').value;
+            const url = document.getElementById('site-url').value;
+            const category = document.getElementById('site-category').value;
+            const icon = document.getElementById('site-icon').value;
+            
+            // 创建新网站对象
+            const newSite = {
+                id: Date.now(), // 使用时间戳作为唯一ID
+                name,
+                url,
+                category,
+                icon
+            };
+            
+            // 添加到数组
+            sites.push(newSite);
+            
+            // 保存到本地存储
+            saveSites();
+            
+            // 重新渲染网站
+            renderSites();
+            
+            // 关闭模态框并重置表单
+            closeAddModal();
+        }
+
+        // 保存网站到本地存储
+        function saveSites() {
+            localStorage.setItem('savedSites', JSON.stringify(sites));
+        }
+
+        // 切换主题
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // 删除网站
+        function deleteSite(id) {
+            sites = sites.filter(site => site.id !== id);
+            saveSites();
+            renderSites();
+        }
+
+        // 渲染网站
+        function renderSites() {
+            // 清空网格
+            sitesGrid.innerHTML = '';
+            
+            // 过滤网站
+            let filteredSites = sites;
+            
+            // 按类别过滤
+            if (currentCategory !== 'all') {
+                filteredSites = filteredSites.filter(site => site.category === currentCategory);
+            }
+            
+            // 按搜索词过滤
+            if (currentSearch) {
+                filteredSites = filteredSites.filter(site => 
+                    site.name.toLowerCase().includes(currentSearch) || 
+                    site.url.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            // 渲染网站卡片
+            if (filteredSites.length === 0) {
+                sitesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>没有找到网站</h3>
+                        <p>当前筛选条件下没有匹配的网站，尝试更改搜索词或选择其他分类。</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredSites.forEach(site => {
+                const domain = new URL(site.url).hostname;
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-icon">
+                        <i class="${site.icon}"></i>
+                    </div>
+                    <h3>${site.name}</h3>
+                    <p>快速访问${site.name}，查找所需资源</p>
+                    <div class="domain">${domain}</div>
+                    <div class="delete-btn" data-id="${site.id}">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                `;
+                
+                // 添加点击事件
+                card.addEventListener('click', (e) => {
+                    // 检查是否点击的是删除按钮
+                    if (e.target.closest('.delete-btn')) {
+                        deleteSite(site.id);
+                    } else {
+                        window.open(site.url, '_blank');
+                    }
+                });
+                
+                sitesGrid.appendChild(card);
+            });
+        }
+
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>
